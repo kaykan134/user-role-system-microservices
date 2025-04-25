@@ -3,11 +3,16 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser())
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI).then(() => {
@@ -17,7 +22,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 
 // Auth Middleware
 const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.session
   if (!token) return res.status(401).json({ error: "No token provided" });
 
   try {

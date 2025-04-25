@@ -1,12 +1,10 @@
-version: "3"
-
 services:
   auth-service:
     build: ./auth-service
     ports:
       - "5000:3000"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/auth-db
+      - MONGO_URI=mongodb://mongo:27017/authDB
     networks:
       - app-network
 
@@ -15,7 +13,7 @@ services:
     ports:
       - "5001:5001"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/user-db
+      - MONGO_URI=mongodb://mongo:27017/authDB
     networks:
       - app-network
 
@@ -44,18 +42,18 @@ services:
     networks:
       - app-network
 
-  api-gateway:
-    build: ./api-gateway
-    ports:
-      - "8080:8080"
-    networks:
-      - app-network
-    depends_on:
-      - auth-service
-      - user-service
-      - issue-service
-      - feedback-service
-      - export-service
+  # api-gateway:
+  #   build: ./api-gateway
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     - auth-service
+  #     - user-service
+  #     - issue-service
+  #     - feedback-service
+  #     - export-service
 
   mongo:
     image: mongo:latest

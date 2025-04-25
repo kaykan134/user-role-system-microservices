@@ -4,17 +4,22 @@ const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const { Parser } = require('json2csv');
+const cookieParser = require('cookie-parser');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser())
 
 const PORT = 5004;
 
 // 🔐 Auth Middleware
 const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.session
   if (!token) return res.status(401).json({ error: "No token" });
 
   try {
@@ -33,9 +38,9 @@ const adminOnly = (req, res, next) => {
 };
 
 // 🌐 Base URLs of other services
-const USER_SERVICE = 'http://localhost:5001/users';
-const FEEDBACK_SERVICE = 'http://localhost:5003/feedback';
-const ISSUE_SERVICE = 'http://localhost:5002/issues';
+const USER_SERVICE = 'http://user-service:5001/users';
+const FEEDBACK_SERVICE = 'http://feedback-service:5003/feedback';
+const ISSUE_SERVICE = 'http://issue-service:5002/issues';
 
 // 📁 Export as JSON
 app.get('/export/json', auth, adminOnly, async (req, res) => {
